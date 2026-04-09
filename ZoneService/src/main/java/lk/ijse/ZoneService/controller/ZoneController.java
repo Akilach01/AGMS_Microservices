@@ -4,9 +4,9 @@ package lk.ijse.ZoneService.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/zones")
@@ -30,5 +30,47 @@ public class ZoneController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping
+    public List<Zone> getAllZones(){
+        return zoneRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Zone> getZoneById(@PathVariable Long id){
+        return zoneRepository.findById(id)
+                .map(zone -> new ResponseEntity<>(zone,HttpStatus. OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteZone(@PathVariable Long id){
+        if(zoneRepository.existById(id)){
+            zoneRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+}
+
+   @PutMapping("/{id}")
+    public ResponseEntity<Zone> updateZone(@PathVariable Long id, @RequestBody Zone zoneDetails){
+        return zoneRepository.findById(id)
+                .map(existingZone ->{
+
+                    existingZone.setName(zoneDetails.getName());
+                    existingZone.setMinTemp(zoneDetails.getMinTemp());
+                    existingZone.setMAxTemp(zoneDetails.getMaxTemp());
+
+                    if (existingZone.getMinTemp() >= existingZone.getMaxTemp()){
+                        throw new IllegalArgumentException("Minimum temp exceeded");
+                    }
+
+                    Zone updateZone = zoneRepository.save(existingZone);
+                    return new ResponseEntity<>(updateZone, HttpStatus.OK);
+                })
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+   }
+
 
 }
