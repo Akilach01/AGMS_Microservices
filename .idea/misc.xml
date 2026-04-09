@@ -7,6 +7,7 @@
         <option value="$PROJECT_DIR$/ConfigServer/pom.xml" />
         <option value="$PROJECT_DIR$/EurekaServer/pom.xml" />
         <option value="$PROJECT_DIR$/Api-Gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/ZoneService/pom.xml" />
       </list>
     </option>
   </component>

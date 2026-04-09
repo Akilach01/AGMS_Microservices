@@ -9,7 +9,8 @@ spring:
     config:
       server:
         git:
-          uri:
+          uri: https://github.com/Akilach01/agms-config-repo.git
+          default-label: main
 
 
 
