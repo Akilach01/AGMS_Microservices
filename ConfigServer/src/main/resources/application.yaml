@@ -5,4 +5,11 @@ spring:
   application:
     name: ConfigServer
 
+  cloud:
+    config:
+      server:
+        git:
+          uri:
+
+
 
