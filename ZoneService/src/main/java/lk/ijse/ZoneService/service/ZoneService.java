@@ -1,9 +1,11 @@
 package lk.ijse.ZoneService.service;
 
+import lk.ijse.ZoneService.client.IotExternalClient;
 import lk.ijse.ZoneService.dto.DeviceRegistrationRequest;
 import lk.ijse.ZoneService.dto.LoginRequest;
 import lk.ijse.ZoneService.dto.LoginResponse;
 import lk.ijse.ZoneService.entity.Zone;
+import lk.ijse.ZoneService.repository.ZoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
