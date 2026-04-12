@@ -1,6 +1,5 @@
 package lk.ijse.ZoneService.service;
 
-import lk.ijse.ZoneService.client.IotExternalClient;
 import lk.ijse.ZoneService.dto.DeviceRegistrationRequest;
 import lk.ijse.ZoneService.dto.LoginRequest;
 import lk.ijse.ZoneService.dto.LoginResponse;
