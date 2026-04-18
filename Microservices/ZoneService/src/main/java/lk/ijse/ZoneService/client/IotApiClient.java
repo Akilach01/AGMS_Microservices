@@ -1,6 +1,8 @@
 package lk.ijse.ZoneService.client;
 
 import org.apache.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -117,8 +119,34 @@ public StringregisterDevice(String deviceName, String zoneId){
 
             }return "device-" + System.currentTimeMillis();
         }
+ public Map<String, Object> fetchTeltry(String deviceId){
+   ensureAuthenticated();
+   try{
+       HttpHeaders headers = createAuthHeaders();
+       HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-
-
+       ResponseEntity<Map> response = restTemplate.exchange(
+               BASE_URL + "/devices/telemetry/" + deviceId,
+               HttpMethod.GET, entity, Map.class
+       );
+       return response.getBody();
+} catch (Exception e) {
+       log.error("Retry failed : {}", ex.getMessage());
+   }
 }
+  return null;
+}
+
+private void ensureAuthenticated(){
+    if (this.accessToken == null){
+        register();
+        login();
+    }
+}
+private HttpHeaders createAuthHeaders(){
+    httpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setBearerAuth(this.accessToken);
+    return headers;
+  }
 }

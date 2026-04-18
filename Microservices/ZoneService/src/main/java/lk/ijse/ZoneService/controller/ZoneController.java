@@ -1,6 +1,7 @@
 package lk.ijse.ZoneService.controller;
 
 
+import lk.ijse.ZoneService.dto.ZoneDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,67 +11,56 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/zones")
+@RequiredArgsConstructor
+@CrossOrigin
 public class ZoneController {
 
     @Autowired
-    private ZoneService zoneService;
+    private final ZoneService zoneService;
 
-    @Autowired
-    private ZoneRepository zoneRepository;
+    @PostMapping
+    public ZoneDto save(RequestBody ZoneDto dto){
+       return service.save(dto);
+    }
 
-    @postMapping
-    public ResponseEntity<Zone> createZone(@RequestBody Zone zone){
-        try{
-            Zone createdZone = zoneService.createZone(zone);
-            return new ResponseEntity<>(createdZone, HttpStatus.CREATED);
-        }catch (IllegalArgumentException e){
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @PutMapping("/{id}")
+    public ZoneDto update(@PathVariable String id, @RequestBody ZoneDto dto){
+        return service.update(id, dto);
     }
 
     @GetMapping
-    public List<Zone> getAllZones(){
-        return zoneRepository.findAll();
+    public List<ZoneDto> all(){
+        return service.getAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Zone> getZoneById(@PathVariable Long id){
-        return zoneRepository.findById(id)
-                .map(zone -> new ResponseEntity<>(zone,HttpStatus. OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ZoneDto findById(@PathVariable String id){
+        return service.getById(id);
+    }
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable String id){
+        service.delete(id);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteZone(@PathVariable Long id){
-        if(zoneRepository.existById(id)){
-            zoneRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-}
-
-   @PutMapping("/{id}")
-    public ResponseEntity<Zone> updateZone(@PathVariable Long id, @RequestBody Zone zoneDetails){
-        return zoneRepository.findById(id)
-                .map(existingZone ->{
-
-                    existingZone.setName(zoneDetails.getName());
-                    existingZone.setMinTemp(zoneDetails.getMinTemp());
-                    existingZone.setMAxTemp(zoneDetails.getMaxTemp());
-
-                    if (existingZone.getMinTemp() >= existingZone.getMaxTemp()){
-                        throw new IllegalArgumentException("Minimum temp exceeded");
-                    }
-
-                    Zone updateZone = zoneRepository.save(existingZone);
-                    return new ResponseEntity<>(updateZone, HttpStatus.OK);
-                })
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-   }
-
+    @GetMapping("/{id}/status")
+    public String chechStatus(@PathVariable int id, @RequestParam Double temp){
+        return service.checkZoneStatus(id, temp);
+    }
+    @GetMapping("/search")
+    public List<ZoneDto> search(@RequestParam String name){
+        return service.searchByName(name);
+    }
+    @GetMapping("/filter")
+    public List<ZoneDto> filter(@RequestParam Double temp){
+        return service.filterByTemperature(temp);
+    }
+    @GetMapping("/devices")
+    public List<String> getDevices(){
+        return service.getAllDeviceIds();
+    }
+    @GetMapping("/count")
+    public Long count(){
+        return service.countZones();
+    }
 
 }
